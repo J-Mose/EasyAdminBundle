@@ -19,6 +19,9 @@ namespace JavierEguiluz\Bundle\EasyAdminBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use JavierEguiluz\Bundle\EasyAdminBundle\EasyAdminEvents;
+use JavierEguiluz\Bundle\EasyAdminBundle\Event\DeleteFormEvent;
+use JavierEguiluz\Bundle\EasyAdminBundle\Event\EntityFormEvent;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +44,9 @@ class AdminController extends Controller
 
     /** @var EntityManager */
     protected $em;
+
+    /** @var EventDispatcherInterface */
+    protected $dispatcher;
 
     protected $view;
 
@@ -115,7 +121,7 @@ class AdminController extends Controller
         }
 
         $this->em = $this->getDoctrine()->getManagerForClass($this->entity['class']);
-
+        $this->dispatcher = $this->get('event_dispatcher');
         $this->request = $request;
         $this->view = $this->request->query->get('view', 'list');
     }
@@ -501,6 +507,9 @@ class AdminController extends Controller
             $form->add($name, $metadata['fieldType'], $formFieldOptions);
         }
 
+        $event = new EntityFormEvent($form, $entity, $view);
+        $this->dispatcher->dispatch(EasyAdminEvents::POST_ENTITY_FORM_CREATE, $event);
+
         return $form->getForm();
     }
 
@@ -530,12 +539,15 @@ class AdminController extends Controller
      */
     protected function createDeleteForm($entityName, $entityId)
     {
-        return $this->createFormBuilder()
+        $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('admin', array('action' => 'delete', 'entity' => $entityName, 'id' => $entityId)))
             ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+            ->add('submit', 'submit', array('label' => 'Delete'));
+
+        $event = new DeleteFormEvent($form, $entityName, $entityId);
+        $this->dispatcher->dispatch(EasyAdminEvents::POST_DELETE_FORM_CREATE, $event);
+
+        return $form->getForm();
     }
 
     /**
