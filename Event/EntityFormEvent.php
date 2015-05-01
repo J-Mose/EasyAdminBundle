@@ -12,10 +12,10 @@
 namespace JavierEguiluz\Bundle\EasyAdminBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Form\FormBuilder ;
+use Symfony\Component\Form\FormBuilder;
 
 /**
- * Class FormEvent
+ * Class EntityFormEvent
  */
 class EntityFormEvent extends Event
 {
@@ -26,7 +26,7 @@ class EntityFormEvent extends Event
     private $entity;
 
     /**
-     * @var \Symfony\Component\Form\FormBuilder
+     * @var FormBuilder
      */
     private $form;
 
@@ -36,11 +36,11 @@ class EntityFormEvent extends Event
     private $view;
 
     /**
-     * @param FormBuilder  $form
+     * @param FormBuilder $form
      * @param mixed $entity
      * @param string $view
      */
-    public function __construct(FormBuilder  $form, $entity, $view)
+    public function __construct(FormBuilder $form, $entity, $view)
     {
         $this->form = $form;
         $this->entity = $entity;

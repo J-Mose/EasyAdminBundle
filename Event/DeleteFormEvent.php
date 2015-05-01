@@ -12,10 +12,10 @@
 namespace JavierEguiluz\Bundle\EasyAdminBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\Form\FormBuilder ;
+use Symfony\Component\Form\FormBuilder;
 
 /**
- * Class FormEvent
+ * Class DeleteFormEvent
  */
 class DeleteFormEvent extends Event
 {
@@ -31,16 +31,16 @@ class DeleteFormEvent extends Event
     private $entityName;
 
     /**
-     * @var \Symfony\Component\Form\FormBuilder
+     * @var FormBuilder
      */
     private $form;
 
     /**
-     * @param FormBuilder  $form
-     * @param $entityName
-     * @param $entityId
+     * @param FormBuilder $form
+     * @param string $entityName
+     * @param mixed $entityId
      */
-    public function __construct(FormBuilder  $form, $entityName, $entityId)
+    public function __construct(FormBuilder $form, $entityName, $entityId)
     {
         $this->form = $form;
         $this->entityName = $entityName;
@@ -48,7 +48,7 @@ class DeleteFormEvent extends Event
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getEntityName()
     {
